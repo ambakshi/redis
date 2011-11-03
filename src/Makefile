@@ -3,8 +3,8 @@
 # This file is released under the BSD license, see the COPYING file
 
 release_hdr := $(shell sh -c './mkreleasehdr.sh')
-uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
-osname := $(shell uname -rs | cut -f 1-2 -d "." | cut -f 1 -d "-")
+uname_S ?= $(shell sh -c 'uname -s 2>/dev/null || echo not')
+osname ?= $(shell uname -rs | cut -f 1-2 -d "." | cut -f 1 -d "-")
 
 OPTIMIZATION?=-O2
 
@@ -45,7 +45,7 @@ else
     CCLINK?= -mthreads
     LIBS?= -lws2_32
     DEBUG?= -g -ggdb 
-    CC=gcc
+    CC?=gcc
   else
   CFLAGS?=-std=c99 -pedantic $(OPTIMIZATION) -Wall -W $(ARCH) $(PROF)
   CCLINK?=-lm -pthread

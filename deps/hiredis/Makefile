@@ -5,8 +5,8 @@
 OBJ = net.o hiredis.o sds.o async.o
 BINS = hiredis-example hiredis-test
 
-uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
-osname := $(shell uname -rs | cut -f 1-2 -d "." | cut -f 1 -d "-")
+uname_S ?= $(shell sh -c 'uname -s 2>/dev/null || echo not')
+osname ?= $(shell uname -rs | cut -f 1-2 -d "." | cut -f 1 -d "-")
 OPTIMIZATION?=-O3
 ifeq ($(uname_S),SunOS)
   CFLAGS?=-std=c99 -pedantic $(OPTIMIZATION) -fPIC -Wall -W -D__EXTENSIONS__ -D_XPG6 $(ARCH) $(PROF)
@@ -31,10 +31,10 @@ else ifeq ($(osname),MINGW32_NT)
   CCLINK?= -mthreads
   LIBS?= -lws2_32 
   DYLIBNAME?=libhiredis.dll
-  DYLIB_MAKE_CMD?=gcc -shared -Wl,-soname,${DYLIBNAME} -o ${DYLIBNAME} ${OBJ} ${LIBS}
+  DYLIB_MAKE_CMD?=$(CC) -shared -Wl,-soname,${DYLIBNAME} -o ${DYLIBNAME} ${OBJ} ${LIBS}
   STLIBNAME?=libhiredis.a  
-  STLIB_MAKE_CMD?=ar rcs ${STLIBNAME} ${OBJ}
-  CC=gcc
+  STLIB_MAKE_CMD?=$(AR) rcs ${STLIBNAME} ${OBJ}
+  CC?=gcc
 else
   CFLAGS?=-std=c99 -pedantic $(OPTIMIZATION) -fPIC -Wall -W -Wstrict-prototypes -Wwrite-strings $(ARCH) $(PROF)
   CCLINK?=-lm -pthread
