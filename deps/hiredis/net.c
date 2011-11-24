@@ -33,6 +33,9 @@
 #include "fmacros.h"
 #include <sys/types.h>
 #ifdef _WIN32
+  #ifndef FD_SETSIZE
+    #define FD_SETSIZE 16000
+  #endif
   #include "winsock2.h"
   #include "windows.h"
   #define socklen_t int
@@ -294,8 +297,10 @@ int redisContextConnectTcp(redisContext *c, const char *addr, int port, struct t
 
     if ((s = redisCreateSocket(c,AF_INET)) < 0)
         return REDIS_ERR;
+#ifndef _WIN32
     if (redisSetBlocking(c,s,0) != REDIS_OK)
         return REDIS_ERR;
+#endif
 
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
